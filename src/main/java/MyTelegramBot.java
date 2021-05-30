@@ -1,20 +1,20 @@
-import org.json.JSONException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.*;
 
 public class MyTelegramBot extends TelegramLongPollingBot {
     private String resultURL;
+    private static ExecutorService executor = Executors.newFixedThreadPool(10);
     public static final String BOT_USERNAME = "slavahoholBot";
     public static final String BOT_TOKEN =  "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
     public static long CHAT_ID;
@@ -23,15 +23,14 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private String sendString;
     @Override
     public void onUpdateReceived(Update update) {
-         CHAT_ID = update.getMessage().getChatId();
-
+        CHAT_ID = update.getMessage().getChatId();
         if (update.hasMessage() && update.getMessage().hasText()) {
 
             String userUserName = update.getMessage().getFrom().getFirstName();
             long userID = update.getMessage().getFrom().getId();
             String message = update.getMessage().getText().toLowerCase();
-            log(userUserName , Long.toString(userID), message);
-            if(message.contains("славик") && message.contains("код дай")){
+            log(userUserName, Long.toString(userID), message);
+            if (message.contains("славик") && message.contains("код дай")) {
                 try {
                     execute(new SendMessage().setChatId(CHAT_ID).setText("```  ```"));
                 } catch (TelegramApiException e) {
@@ -39,43 +38,45 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 }
             }
 
-            if(message.contains("славик") && message.contains("выгрузи")) {
+            if (message.contains("славик") && message.contains("выгрузи")) {
+                PictureHTTPClient pictureHTTPClient = new PictureHTTPClient();
 
 
+                Callable<String> runHTTPClient = new Callable<String>() {
+                    @Override
+                    public String call() throws Exception {
+                        String inputMessage = prepareMessage(message);
+                        return pictureHTTPClient.getImageLink(inputMessage).trim();
 
-            PictureHTTPClient pictureHTTPClient = new PictureHTTPClient();
-                  // TODO:  REPAIR MULTITHREADING
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            while (resultURL == null) {
-                                try {
-                                    System.out.println(1);
-                                    resultURL = pictureHTTPClient.getImageLink(prepareMessage(message));
-                                    Thread.sleep(1000);
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                    }
+                };
 
-                            }
-                            System.out.println(resultURL);
-                        }
-                    });
-                thread.start();
+                Future<String> future = null;
+                try {
+                    future = executor.submit(runHTTPClient);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
+                try {
+                    resultURL = future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                if (future.isDone()) {
+                    System.out.println("congratz");
+                }
                 SendPhoto sendPhotoIm = new SendPhoto();
-                    sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
+                sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
+                try {
+                    sendPhoto(sendPhotoIm);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
                 }
 
-
-
-                }
             }
-
+        }
+    }
 
     public String prepareMessage(String message) throws UnsupportedEncodingException {
         ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
@@ -100,7 +101,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
 
 
-            @Override
+    @Override
     public String getBotUsername() {
         return  BOT_USERNAME;
     }

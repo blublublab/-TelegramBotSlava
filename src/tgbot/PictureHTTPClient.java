@@ -1,3 +1,5 @@
+package tgbot;
+
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -51,7 +53,7 @@ public class PictureHTTPClient {
                     getString("type").
                     equals("image/jpeg");
         } catch (JSONException e) {
-            random = (int) Math.random()*50;
+            random = (int) (Math.random() * 50);
             findValidImage();
         }
         return random;

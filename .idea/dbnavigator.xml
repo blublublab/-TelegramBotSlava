@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DBNavigator.Project.DataEditorManager">
     <record-view-column-sorting-type value="BY_INDEX" />
-    <value-preview-text-wrapping value="true" />
+    <value-preview-text-wrapping value="false" />
     <value-preview-pinned value="false" />
   </component>
   <component name="DBNavigator.Project.DataExportManager">
@@ -24,18 +24,22 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
-    <loaded-nodes />
+    <loaded-nodes>
+      <connection connection-id="4a8b298d-7808-4704-bf51-9b813a0f6be2">
+        <schema name="-1001263717466" object-types="table, view, procedure, function, constraint, index, column, dataset trigger" />
+      </connection>
+    </loaded-nodes>
   </component>
   <component name="DBNavigator.Project.DatabaseConsoleManager">
-    <connection id="9f036119-ecf9-4224-9754-89e9263d1916">
-      <console name="ChatsDB" type="STANDARD" schema="" session="Main" />
+    <connection id="4a8b298d-7808-4704-bf51-9b813a0f6be2">
+      <console name="chats" type="STANDARD" schema="" session="Main" />
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
     <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
-    <connection id="9f036119-ecf9-4224-9754-89e9263d1916" />
+    <connection id="4a8b298d-7808-4704-bf51-9b813a0f6be2" />
   </component>
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
@@ -63,36 +67,37 @@
   </component>
   <component name="DBNavigator.Project.Settings">
     <connections>
-      <connection id="9f036119-ecf9-4224-9754-89e9263d1916" active="true">
+      <connection id="4a8b298d-7808-4704-bf51-9b813a0f6be2" active="true">
         <database>
-          <name value="ChatsDB" />
+          <name value="chats" />
           <description value="" />
-          <database-type value="SQLITE" />
+          <database-type value="MYSQL" />
           <config-type value="BASIC" />
-          <database-version value="9999.0" />
+          <database-version value="8.0" />
           <driver-source value="EXTERNAL" />
-          <driver-library value="" />
-          <driver value="" />
-          <url-type value="FILE" />
+          <driver-library value="C:\Program Files (x86)\MySQL\Connector J 8.0\mysql-connector-java-8.0.25.jar" />
+          <driver value="com.mysql.cj.jdbc.Driver" />
+          <url-type value="DATABASE" />
           <host value="localhost" />
-          <port value="1234" />
-          <database value="database" />
-          <files>
-            <file path="chats.db" schema="main" />
-          </files>
-          <type value="NONE" />
-          <user value="" />
-          <deprecated-pwd value="" />
+          <port value="3306" />
+          <database value="Mysql" />
+          <type value="USER_PASSWORD" />
+          <user value="admin" />
+          <deprecated-pwd value="QUE0NTUyMTIxYWE=" />
         </database>
         <properties>
-          <auto-commit value="false" />
+          <auto-commit value="true" />
+          <properties>
+            <property key="allowPublicKeyRetrieval" value="true" />
+            <property key="autoReconnect" value="true" />
+          </properties>
         </properties>
         <ssh-settings>
-          <active value="true" />
-          <proxy-host value="127.0.0.1" />
+          <active value="false" />
+          <proxy-host value="" />
           <proxy-port value="22" />
-          <proxy-user value="root" />
-          <deprecated-proxy-pwd value="cm9vdA==" />
+          <proxy-user value="" />
+          <deprecated-proxy-pwd value="" />
           <auth-type value="PASSWORD" />
           <key-file value="" />
           <key-passphrase value="" />
@@ -111,7 +116,7 @@
           <connect-automatically value="true" />
           <restore-workspace value="true" />
           <restore-workspace-deep value="true" />
-          <environment-type value="development" />
+          <environment-type value="default" />
           <connectivity-timeout value="5" />
           <idle-time-to-disconnect value="30" />
           <idle-time-to-disconnect-pool value="5" />

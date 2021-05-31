@@ -1,10 +1,13 @@
+import db.MySQLController;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,22 +17,43 @@ import java.util.concurrent.*;
 
 public class MyTelegramBot extends TelegramLongPollingBot {
     private String resultURL;
+
     private static ExecutorService executor = Executors.newFixedThreadPool(10);
+    private static MySQLController mySQLController = new MySQLController();
+
     public static final String BOT_USERNAME = "slavahoholBot";
     public static final String BOT_TOKEN =  "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
     public static long CHAT_ID;
-
-
+    public ArrayList<User> user = new ArrayList<User>();
     private String sendString;
     @Override
     public void onUpdateReceived(Update update) {
+            //GETDB SETDB VALUES;
+
+
         CHAT_ID = update.getMessage().getChatId();
+
+
         if (update.hasMessage() && update.getMessage().hasText()) {
+
+
 
             String userUserName = update.getMessage().getFrom().getFirstName();
             long userID = update.getMessage().getFrom().getId();
             String message = update.getMessage().getText().toLowerCase();
-            log(userUserName, Long.toString(userID), message);
+            log(userUserName, String.valueOf(userID), message);
+
+
+
+            if(message.contains("славик") && message.contains("добавь") && message.contains("баз")){
+                try {
+                   mySQLController.setUserToDB(userID, userUserName, mySQLController.DatabaseConnect());
+                } catch (IOException | SQLException e) {
+                    e.printStackTrace();
+                }
+
+            };
+
             if (message.contains("славик") && message.contains("код дай")) {
                 try {
                     execute(new SendMessage().setChatId(CHAT_ID).setText("```  ```"));
@@ -46,7 +70,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     @Override
                     public String call() throws Exception {
                         String inputMessage = prepareMessage(message);
-                        return pictureHTTPClient.getImageLink(inputMessage).trim();
+                        return pictureHTTPClient.getImageLink(inputMessage);
 
                     }
                 };
@@ -66,14 +90,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 if (future.isDone()) {
                     System.out.println("congratz");
                 }
-                SendPhoto sendPhotoIm = new SendPhoto();
-                sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
-                try {
-                    sendPhoto(sendPhotoIm);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                if(resultURL != null && resultURL.contains("imgur")) {
+                    SendPhoto sendPhotoIm = new SendPhoto();
+                    sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
+                    try {
+                        sendPhoto(sendPhotoIm);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
 
+                }
             }
         }
     }

@@ -1,77 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<main:project xmlns:main="http://maven.apache.org/POM/4.0.0"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.tg</groupId>
+    <artifactId>slavik_tg_bot</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
 
 
-<main:properties>
-        <main:maven.compiler.source>11</main:maven.compiler.source>
-        <main:maven.compiler.target>11</main:maven.compiler.target>
-    </main:properties>
-<main:dependencies>
+
+    <dependencies>
     <!-- https://mvnrepository.com/artifact/io.reactivex/rxjava -->
-    <main:dependency>
-        <main:groupId>io.reactivex</main:groupId>
-        <main:artifactId>rxjava</main:artifactId>
-        <main:version>1.3.8</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>io.reactivex</groupId>
+        <artifactId>rxjava</artifactId>
+        <version>1.3.8</version>
+    </dependency>
 
 
 
-    <main:dependency>
-        <main:groupId>org.apache.httpcomponents</main:groupId>
-        <main:artifactId>httpcore</main:artifactId>
-        <main:version>4.4</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4</version>
+    </dependency>
 
 
-    <main:dependency>
-        <main:groupId>org.apache.httpcomponents</main:groupId>
-        <main:artifactId>httpasyncclient</main:artifactId>
-        <main:version>4.0.2</main:version>
-    </main:dependency>
-    <main:dependency>
-        <main:groupId>org.json</main:groupId>
-        <main:artifactId>json</main:artifactId>
-        <main:version>20140107</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpasyncclient</artifactId>
+        <version>4.0.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20140107</version>
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-    <main:dependency>
-        <main:groupId>mysql</main:groupId>
-        <main:artifactId>mysql-connector-java</main:artifactId>
-        <main:version>8.0.25</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.25</version>
+    </dependency>
 
 
-    <main:dependency>
-        <main:groupId>org.telegram</main:groupId>
-        <main:artifactId>telegrambots</main:artifactId>
-        <main:version>3.5</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>org.telegram</groupId>
+        <artifactId>telegrambots</artifactId>
+        <version>3.5</version>
+    </dependency>
 
-    <main:dependency>
-        <main:groupId>com.squareup.okhttp</main:groupId>
-        <main:artifactId>okhttp</main:artifactId>
-        <main:version>2.7.5</main:version>
-    </main:dependency>
+    <dependency>
+        <groupId>com.squareup.okhttp</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>2.7.5</version>
+    </dependency>
 
-    <main:dependency>
-        <main:groupId>com.mashape.unirest</main:groupId>
-        <main:artifactId>unirest-java</main:artifactId>
-        <main:version>1.4.9</main:version>
+    <dependency>
+        <groupId>com.mashape.unirest</groupId>
+        <artifactId>unirest-java</artifactId>
+        <version>1.4.9</version>
 
-    </main:dependency>
+    </dependency>
 
-    <main:dependency>
-        <main:groupId>org.apache.httpcomponents</main:groupId>
-        <main:artifactId>httpclient</main:artifactId>
-        <main:version>4.5.13</main:version>
-    </main:dependency>
-    <main:dependency>
-        <main:groupId>com.vaadin.external.google</main:groupId>
-        <main:artifactId>android-json</main:artifactId>
-        <main:version>0.0.20131108.vaadin1</main:version>
-    </main:dependency>
-</main:dependencies>
-</main:project>
+    <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.13</version>
+    </dependency>
+    <dependency>
+        <groupId>com.vaadin.external.google</groupId>
+        <artifactId>android-json</artifactId>
+        <version>0.0.20131108.vaadin1</version>
+    </dependency>
+</dependencies>
+</project>

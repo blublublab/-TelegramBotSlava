@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* tgbot.Main
+web: java $JAVA_OPTS -cp target/classes:target/dependency/* src.tgbot.Main

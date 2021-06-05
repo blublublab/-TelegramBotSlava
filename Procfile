@@ -1,1 +1,1 @@
-web: java -cp target/classes/;target/dependency/* com.src.tgbot.Main
+web: java -cp target/classes/;target/dependency/* src.tgbot.Main

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org</groupId>
-    <artifactId>slavik_tg_bot</artifactId>
+    <artifactId>tgbot</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -95,7 +95,7 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>org.src.tgbot.Main</mainClass>
+                            <mainClass>tgbot.Main</mainClass>
                             <name>TelegramBotSlava</name>
                         </program>
                     </programs>

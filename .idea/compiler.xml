@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="TelegramBots" />
+        <module name="slavik_tg_bot" />
       </profile>
     </annotationProcessing>
   </component>

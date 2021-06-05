@@ -43,7 +43,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
             String userUserName = update.getMessage().getFrom().getFirstName();
             long userID = update.getMessage().getFrom().getId();
-            if( ! tempIDStorage.contains(userID)) {
+           if( ! tempIDStorage.contains(userID)) {
                UserObjects userObject = new UserObjects(userUserName, userID);
                mySQLController = new MySQLController(CHAT_ID, userObject);
                message = update.getMessage().getText().toLowerCase();

@@ -12,7 +12,7 @@ public class Main {
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 
         try {
-            telegramBotsApi.registerBot(new MyTelegramBot());
+            telegramBotsApi.registerBot(new tgbot.MyTelegramBot());
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }

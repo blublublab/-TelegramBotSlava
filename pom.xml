@@ -95,7 +95,7 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>fully.qualified.MainClass</mainClass>
+                            <mainClass>master.src.tgbot.Main.java</mainClass>
                             <name>TelegramBotSlava</name>
                         </program>
                     </programs>

@@ -53,6 +53,17 @@ public class DatabaseContract {
 
     }
 
+    public String getTopUsers(String dbName){
+       String dbtest =   "SELECT "  +
+               USER_FIRST_NAME_COLUMN  + ", " +
+               USER_MESSAGE_COUNT_COLUMN +" FROM `" + dbName + "`." +
+               USERS  + " ORDER BY " +
+               USER_MESSAGE_COUNT_COLUMN + " DESC LIMIT 10" ;
+        System.out.println(dbtest);
+
+        return dbtest;
+    }
+
 
 
 

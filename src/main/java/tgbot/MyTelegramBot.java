@@ -20,7 +20,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private String resultURL;
     private static final ArrayList<String> tempIDStorage = new ArrayList<>(1000);
     private String message;
-    private static ExecutorService executor = Executors.newFixedThreadPool(10);
+    private static ExecutorService executor = Executors.newFixedThreadPool(1);
     private SQLController sqlController;
 
 

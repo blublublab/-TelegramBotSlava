@@ -96,8 +96,8 @@
                     <programs>
                         <program>
 
-                            <mainClass>src.Main</mainClass>
-                            <name>-TelegramBotSlava</name>
+                            <mainClass>tgbot.Main</mainClass>
+                            <name>workerBot</name>
                         </program>
                     </programs>
                 </configuration>

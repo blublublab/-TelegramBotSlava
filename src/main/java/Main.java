@@ -3,6 +3,7 @@
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
+import tgbot.MyTelegramBot;
 
 public class Main {
 
@@ -10,7 +11,7 @@ public class Main {
        ApiContextInitializer.init();
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-           // 1
+
         try {
             telegramBotsApi.registerBot(new MyTelegramBot());
         } catch (TelegramApiRequestException e) {

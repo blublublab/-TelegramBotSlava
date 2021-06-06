@@ -1,3 +1,5 @@
+package tgbot.db;
+
 import java.io.IOException;
 import java.sql.SQLException;
 

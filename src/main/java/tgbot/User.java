@@ -1,3 +1,5 @@
+package tgbot;
+
 public class User {
     private String name;
     private long ID;

@@ -1,3 +1,7 @@
+package tgbot.db;
+
+import tgbot.User;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;

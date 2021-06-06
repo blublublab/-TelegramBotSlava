@@ -1,1 +1,1 @@
-worker: sh target/classes/tgbot/Main
+worker: sh target/classes/-TelegramBotSlava

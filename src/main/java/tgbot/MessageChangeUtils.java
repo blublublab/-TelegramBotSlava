@@ -17,7 +17,7 @@ public  class MessageChangeUtils {
             if (transliterateMap.containsKey(ch)) {
                 sbTransliterate.append(transliterateMap.get(ch));
             } else {
-                sbTransliterate.append(ch);
+                sbTransliterate.append(ch); //char
             }
 
         }

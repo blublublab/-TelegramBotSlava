@@ -27,7 +27,7 @@ public class DatabaseContract {
        String test  =  "CREATE TABLE IF NOT EXISTS \"" + CHAT_ID  + "\"." + USERS + "(" + USERID_COLUMN + " " + TYPE_INT +  " " +  PRIMARY_KEY  + ", "
                + USER_MESSAGE_COUNT_COLUMN + " " + TYPE_INT   +  " DEFAULT 0, " + USER_FIRST_NAME_COLUMN + " " + TYPE_TEXT + ", " +
                USER_OF_DAY_COLUMN + " " + TYPE_BOOL + ")";;
-       System.out.println(test);
+
        return test;
 
 
@@ -44,13 +44,13 @@ public class DatabaseContract {
         String dbInsert = "INSERT  INTO\""+ CHAT_ID +"\"." + USERS + "(" +
                 USERID_COLUMN + ", " +
                 USER_FIRST_NAME_COLUMN + ", " + USER_MESSAGE_COUNT_COLUMN + ", " + USER_OF_DAY_COLUMN  + ") VALUES (" + userID + ", '" + userName + "', 0, FALSE)";
-        System.out.println(dbInsert);
+
         return dbInsert;
     }
 
     public String getUserFromDB(long userID) {
        String selectfromdb =  "SELECT * FROM \"" + CHAT_ID + "\"." +   USERS + " WHERE " + USERID_COLUMN +  " = " + userID;
-        System.out.println(selectfromdb);;
+
        return selectfromdb;
 
     }
@@ -59,7 +59,7 @@ public class DatabaseContract {
        String setMessageCount =  "UPDATE \"" + CHAT_ID + "\"." + USERS + " SET " +
                USER_MESSAGE_COUNT_COLUMN  + " = "  +
                USER_MESSAGE_COUNT_COLUMN + " +1 WHERE " + USERID_COLUMN + " = " + userID;
-        System.out.println(setMessageCount);
+
         return  setMessageCount;
 
 
@@ -71,7 +71,7 @@ public class DatabaseContract {
                USER_MESSAGE_COUNT_COLUMN +" FROM \"" + CHAT_ID + "\"."
                + USERS  +" ORDER BY " +
                USER_MESSAGE_COUNT_COLUMN + " DESC LIMIT 10" ;
-        System.out.println(dbtest);
+
 
         return dbtest;
     }

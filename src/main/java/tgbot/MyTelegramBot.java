@@ -1,11 +1,13 @@
 package tgbot;
 
-import tgbot.db.SQLController;
+import com.ibm.icu.text.Transliterator;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import tgbot.db.SQLController;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
@@ -82,8 +84,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 Callable<String> runHTTPClient = new Callable<String>() {
                     @Override
                     public String call() throws Exception {
-                        String inputMessage = prepareMessage(message);
-                        return pictureHTTPClient.getImageLink(inputMessage);
+
+                        return pictureHTTPClient.getImageLink( prepareMessage(message));
 
                     }
                 };
@@ -132,7 +134,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
         }
         sendString = stringBuilderRequest.toString().replaceAll("[^([A-Z])\\w+\\s]", "");
-        return sendString;
+
+     //   var CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
+        Transliterator toLatinTrans = Transliterator.getInstance("Russian-Latin/BGN");
+        String result = toLatinTrans.transliterate(sendString);
+
+        return result;
 
     }
 

@@ -127,16 +127,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 3,
                         0L, TimeUnit.SECONDS, new SynchronousQueue<>());
 
-                for(int i =0; i <runnables.size(); i++) {
-                    threadPoolExecutor.submit(runnables.get(i));
+                for (Runnable runnable : runnables) {
+                    threadPoolExecutor.submit(runnable);
                 }
 
 
-                CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
+               /* CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
                         .toArray(CompletableFuture[]::new);
                 CompletableFuture.allOf(futures).join();
 
-
+                */
                 // int recievedThreads = 0;
                  /*   while (recievedThreads < 3) {
                         Future<String> picture = service.take();

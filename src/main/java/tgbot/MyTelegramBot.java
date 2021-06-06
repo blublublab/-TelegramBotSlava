@@ -135,11 +135,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
         sendString = stringBuilderRequest.toString().replaceAll("[^([A-Z])\\w+\\s]", "");
 
-     //   var CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
-        Transliterator toLatinTrans = Transliterator.getInstance("Russian-Latin/BGN");
-        String result = toLatinTrans.transliterate(sendString);
+        var CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
+        Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
 
-        return result;
+        return toLatinTrans.transliterate(sendString);
 
     }
 

@@ -19,7 +19,7 @@ public class PictureHTTPClient {
     private static final String RAPID_KEY = "89b3ea805bmsh5a88d264a2dbd96p16d752jsnb8c10be4448c";
     private static final String RAPID_HOST = "contextualwebsearch-websearch-v1.p.rapidapi.com";
 
-    public String getImageLink(String inputSearchText) throws IOException, JSONException {
+        public String getImageLink(String inputSearchText) throws IOException, JSONException {
         int pageNumber  = (int) (Math.random()*10 + 1);
         Request request = new Request.Builder()
                 .url("https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI?q="  + inputSearchText +"&pageNumber="+ pageNumber +"&pageSize=50&autoCorrect=true&safeSearch=false")
@@ -33,8 +33,7 @@ public class PictureHTTPClient {
              jsonResponse = new JSONObject(responseBody);
              int imageNumber = (int) (Math.random() * (jsonResponse.getJSONArray("value").length()-1) + 1);
 
-        String imageLink = jsonResponse.getJSONArray("value").getJSONObject(imageNumber).getString("url");
-        return imageLink;
+            return jsonResponse.getJSONArray("value").getJSONObject(imageNumber).getString("url");
     }
 
 

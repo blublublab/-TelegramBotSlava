@@ -1,6 +1,5 @@
 package tgbot;
 
-import com.ibm.icu.text.Transliterator;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
@@ -12,22 +11,26 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.*;
 
+import static tgbot.MessageChangeUtils.cropToRequest;
+import static tgbot.MessageChangeUtils.transliterate;
+
 public class MyTelegramBot extends TelegramLongPollingBot {
-   private String resultURL;
-    private static final  ArrayList<String> tempIDStorage =new ArrayList<>(1000);
+    private String resultURL;
+    private static final ArrayList<String> tempIDStorage = new ArrayList<>(1000);
     private String message;
     private static ExecutorService executor = Executors.newFixedThreadPool(10);
     private SQLController sqlController;
 
+
     public static final String BOT_USERNAME = "slavahoholBot";
-    public static final String BOT_TOKEN =  "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
+    public static final String BOT_TOKEN = "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
     public static long CHAT_ID;
+
+
     public ArrayList<org.telegram.telegrambots.api.objects.User> user = new ArrayList<org.telegram.telegrambots.api.objects.User>();
-    private String sendString;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -40,27 +43,27 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
             String userUserName = update.getMessage().getFrom().getFirstName();
             long userID = update.getMessage().getFrom().getId();
-           if( ! tempIDStorage.contains(userID)) {
-               User userObject = new User(userUserName, userID);
-               sqlController = new SQLController(CHAT_ID, userObject);
-               message = update.getMessage().getText().toLowerCase();
-               try {
+            if (!tempIDStorage.contains(userID)) {
+                User userObject = new User(userUserName, userID);
+                sqlController = new SQLController(CHAT_ID, userObject);
+                message = update.getMessage().getText().toLowerCase();
+                try {
 
-                   sqlController.setUserToDB(sqlController.databaseConnect());
-                   if (!sqlController.idExist(userID)) {
-                       tempIDStorage.add(String.valueOf(userID));
-                   }
+                    sqlController.setUserToDB(sqlController.databaseConnect());
+                    if (!sqlController.idExist(userID)) {
+                        tempIDStorage.add(String.valueOf(userID));
+                    }
 
-               } catch (IOException | SQLException e) {
-                   e.printStackTrace();
-               }
-           }
+                } catch (IOException | SQLException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
                 sqlController.addMessage(userID);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-            if(message.contains("славик") && message.contains("кто в топе")){
+            if (message.contains("славик") && message.contains("кто в топе")) {
                 try {
                     String user = sqlController.getTopUsers(sqlController.databaseConnect());
                     execute(new SendMessage().setChatId(CHAT_ID).setParseMode("HTML").setText(user));
@@ -81,11 +84,19 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 PictureHTTPClient pictureHTTPClient = new PictureHTTPClient();
 
 
+
+                try {
+                    message = cropToRequest(message);
+                    message = transliterate(message);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
                 Callable<String> runHTTPClient = new Callable<String>() {
                     @Override
                     public String call() throws Exception {
 
-                        return pictureHTTPClient.getImageLink( prepareMessage(message));
+                        return pictureHTTPClient.getImageLink(message);
 
                     }
                 };
@@ -102,9 +113,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-                if (Objects.requireNonNull(future).isDone()) {
-                }
-                if(resultURL != null && resultURL.contains("imgur")) {
+
+                if (resultURL != null) {
                     SendPhoto sendPhotoIm = new SendPhoto();
                     sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
                     try {
@@ -118,29 +128,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    public String prepareMessage(String message) throws UnsupportedEncodingException {
-        ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
-        wordsArrayList.remove("славик");
-        wordsArrayList.remove("выгрузи");
-        StringBuilder stringBuilderRequest = new StringBuilder();
-        for (int i  = 0  , j = wordsArrayList.size(); i < wordsArrayList.size(); i++) {
-            //TODO: Must append whitespaces according to number of elements
-            stringBuilderRequest.append(wordsArrayList.get(i));
 
-            if(wordsArrayList.size() > (j-(i+1))){
-                j--;
-                stringBuilderRequest.append(" ");
-            }
-
-        }
-        sendString = stringBuilderRequest.toString().replaceAll("[^([A-Z])\\w+\\s]", "");
-
-        var CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
-        Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
-
-        return toLatinTrans.transliterate(sendString);
-
-    }
 
 
 
@@ -165,5 +153,4 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
      */
 }
-
 

@@ -16,11 +16,20 @@ public class SQLController {
     boolean alreadyConnected = false;
     private DatabaseContract dbContract = new DatabaseContract();
     private Statement statement;
+    private static SQLController instance;
 
-    public SQLController(long dbName, User userObject) {
+
+    public static SQLController getInstance(long dbName, User userObject) {
+        if (instance == null) {
+            instance = new SQLController(dbName, userObject);
+        }
+        return instance;
+    };
+   private SQLController(long dbName, User userObject) {
         this.dbName = String.valueOf(dbName);
         this.userObject = userObject;
     }
+
 
     public Connection databaseConnect() throws IOException, SQLException {
 

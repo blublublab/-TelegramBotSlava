@@ -43,8 +43,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             long userID = update.getMessage().getFrom().getId();
             if (!tempIDStorage.contains(userID)) {
                 User userObject = new User(userUserName, userID);
-                sqlController = new SQLController(CHAT_ID, userObject);
-                message = update.getMessage().getText().toLowerCase();
+                sqlController = SQLController.getInstance(userID, userObject);
+                        message = update.getMessage().getText().toLowerCase();
                 try {
 
                     sqlController.setUserToDB(sqlController.databaseConnect());

@@ -97,7 +97,7 @@
                         <program>
 
                             <mainClass>src.tgbot.Main</mainClass>
-                            <name>SlavicBot</name>
+                            <name>tgbot</name>
                         </program>
                     </programs>
                 </configuration>

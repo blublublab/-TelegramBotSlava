@@ -8,7 +8,6 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import tgbot.db.SQLController;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -83,33 +82,19 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             if (message.contains("славик") && message.contains("выгрузи")) {
                 PictureHTTPClient pictureHTTPClient = new PictureHTTPClient();
 
+                 Callable<String> getPreparedMessage = () -> {
+                     message = cropToRequest(message);
+                     message = transliterate(message);
+                     return message;
+                 };
+                 Callable<String> runHTTPClient = () -> pictureHTTPClient.getImageLink(message);
+                Future<String> future0 = executor.submit(getPreparedMessage);
+                Future<String> future1 = executor.submit(runHTTPClient);
 
 
                 try {
-                    message = cropToRequest(message);
-                    message = transliterate(message);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                Callable<String> runHTTPClient = new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-
-                        return pictureHTTPClient.getImageLink(message);
-
-                    }
-                };
-
-                Future<String> future = null;
-                try {
-                    future = executor.submit(runHTTPClient);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    resultURL = Objects.requireNonNull(future).get();
+                    future0.get();
+                    resultURL = Objects.requireNonNull(future1).get();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }

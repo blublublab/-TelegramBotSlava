@@ -35,6 +35,7 @@ public class SQLController {
             String connectionSize = props.getProperty("MaxConnections");
             connection = DriverManager.getConnection(url, user, password);
             alreadyConnected = true;
+            statement = connection.createStatement();
         }
             createUserTable();
             return connection;
@@ -42,7 +43,7 @@ public class SQLController {
 
 
     private void createUserTable() throws SQLException {
-        statement = connection.createStatement();
+
         statement.executeUpdate(dbContract.createSchema());
         statement.executeUpdate(dbContract.createUserTable());
 
@@ -50,7 +51,6 @@ public class SQLController {
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
         if (!this.idExist(this.userObject.getID())) {
-            statement = connection.createStatement();
             statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName()));
             System.out.println("user added to DB: " + userObject.getName());
         }

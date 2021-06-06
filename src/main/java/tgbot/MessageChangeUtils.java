@@ -25,27 +25,6 @@ public  class MessageChangeUtils {
 
     };
 
-    public static String cropToRequest(String message) throws UnsupportedEncodingException {
-        ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
-        wordsArrayList.remove("славик");
-        wordsArrayList.remove("выгрузи");
-        StringBuilder stringBuilderRequest = new StringBuilder();
-        for (int i = 0, j = wordsArrayList.size(); i < wordsArrayList.size(); i++) {
-
-            stringBuilderRequest.append(wordsArrayList.get(i));
-
-               if (wordsArrayList.size() > (j - (i + 1))) {
-                   j--;
-                   stringBuilderRequest.append(" ");
-               }
-           }
-         ;
-
-          stringBuilderRequest.deleteCharAt(stringBuilderRequest.length()- 1);
-          String result = stringBuilderRequest.toString().replaceAll("[^( [A-Z])^[А-ЯЁ][-А-яЁё]\\w+\\s]", "");
-        return result;
-    }
-
     private static Map<Character, String> transliterateMap = new HashMap<Character, String>() {
         {
             put('а', "a");
@@ -81,6 +60,27 @@ public  class MessageChangeUtils {
         }
 
     };
+    public static String cropToRequest(String message) throws UnsupportedEncodingException {
+        ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
+        wordsArrayList.remove("славик");
+        wordsArrayList.remove("выгрузи");
+        StringBuilder stringBuilderRequest = new StringBuilder();
+        for (int i = 0, j = wordsArrayList.size(); i < wordsArrayList.size(); i++) {
+
+            stringBuilderRequest.append(wordsArrayList.get(i));
+
+               if (wordsArrayList.size() > (j - (i + 1))) {
+                   j--;
+                   stringBuilderRequest.append(" ");
+               }
+           }
+         ;
+
+          stringBuilderRequest.deleteCharAt(stringBuilderRequest.length()- 1);
+          String result = stringBuilderRequest.toString().replaceAll("[^( [A-Z])^[А-ЯЁ][-А-яЁё]\\w+\\s]", "");
+        return result;
+    }
+
 
 }
 

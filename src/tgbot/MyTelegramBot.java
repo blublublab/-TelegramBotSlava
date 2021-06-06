@@ -5,6 +5,7 @@ import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import tgbot.db.MySQLController;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.*;
- /*
+
 public class MyTelegramBot extends TelegramLongPollingBot {
    private String resultURL;
     private static final  ArrayList<String> tempIDStorage =new ArrayList<>(1000);
@@ -158,7 +159,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     }
 
      */
-
-
+}
 
 

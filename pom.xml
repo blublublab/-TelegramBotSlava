@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.bots</groupId>
     <artifactId>-TelegramBotSlava</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -96,7 +96,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>org.example.src.Main</mainClass>
+                            <mainClass>org.bots.src.Main</mainClass>
                             <name>-TelegramBotSlava</name>
                         </program>
                     </programs>

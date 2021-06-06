@@ -9,14 +9,14 @@ import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
 
-public class MySQLController {
+public class SQLController {
     private String dbName;
     private User userObject;
     private Connection connection;
     private DatabaseContract dbContract = new DatabaseContract();
     private Statement statement;
 
-    public MySQLController(long dbName, User userObject) {
+    public SQLController(long dbName, User userObject) {
         this.dbName = String.valueOf(dbName);
         this.userObject = userObject;
     }
@@ -27,22 +27,22 @@ public class MySQLController {
         props.load(in);
         in.close();
         String url = props.getProperty("url");
-        String username = props.getProperty("username");
+        String user = props.getProperty("user");
         String password = props.getProperty("password");
-        connection = DriverManager.getConnection(url, username, password);
-        createDb();
+        connection = DriverManager.getConnection(url, user, password);
+        createUserTable();
         return  connection;
     }
 
-    private void createDb() throws SQLException {
-        statement = this.connection.createStatement();
-        statement.executeUpdate(dbContract.createDatabase(this.dbName));
-        statement.executeUpdate(dbContract.createUserTable(this.dbName));
+    private void createUserTable() throws SQLException {
+        statement = connection.createStatement();
+        statement.executeUpdate(dbContract.createSchema());
+        statement.executeUpdate(dbContract.createUserTable());
     }
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
         if (!this.idExist(this.userObject.getID())) {
-            statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName(), this.dbName));
+            statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName()));
             System.out.println("user added to DB: " + userObject.getName());
         }
 
@@ -50,7 +50,7 @@ public class MySQLController {
 
     public void addMessage(long userID) throws SQLException {
         if (this.idExist(userID)) {
-            statement.executeUpdate(dbContract.setMessageToDB(this.userObject.getID(), this.dbName));
+            statement.executeUpdate(dbContract.setMessageToDB(userObject.getID()));
             System.out.println(userID + " added one message");
         }
 
@@ -59,13 +59,13 @@ public class MySQLController {
     }
 
     public boolean idExist(long userID) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(dbContract.getUserFromDB(userID, this.dbName));
+        ResultSet resultSet = statement.executeQuery(dbContract.getUserFromDB(userID));
         return resultSet.next();
     }
 
     public String getTopUsers(Connection connection) throws SQLException {
        StringBuilder result = new StringBuilder();
-       ResultSet resultSet = statement.executeQuery(dbContract.getTopUsers(dbName));
+       ResultSet resultSet = statement.executeQuery(dbContract.getTopUsers());
        int i = 0;
        while(resultSet.next()){
 

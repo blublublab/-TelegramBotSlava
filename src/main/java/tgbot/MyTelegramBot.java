@@ -1,6 +1,6 @@
 package tgbot;
 
-import tgbot.db.MySQLController;
+import tgbot.db.SQLController;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
@@ -19,7 +19,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private static final  ArrayList<String> tempIDStorage =new ArrayList<>(1000);
     private String message;
     private static ExecutorService executor = Executors.newFixedThreadPool(10);
-    private MySQLController mySQLController;
+    private SQLController sqlController;
 
     public static final String BOT_USERNAME = "slavahoholBot";
     public static final String BOT_TOKEN =  "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
@@ -40,12 +40,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
             long userID = update.getMessage().getFrom().getId();
            if( ! tempIDStorage.contains(userID)) {
                User userObject = new User(userUserName, userID);
-               mySQLController = new MySQLController(CHAT_ID, userObject);
+               sqlController = new SQLController(CHAT_ID, userObject);
                message = update.getMessage().getText().toLowerCase();
                try {
 
-                   mySQLController.setUserToDB(mySQLController.databaseConnect());
-                   if (!mySQLController.idExist(userID)) {
+                   sqlController.setUserToDB(sqlController.databaseConnect()    );
+                   if (!sqlController.idExist(userID)) {
                        tempIDStorage.add(String.valueOf(userID));
                    }
 
@@ -54,13 +54,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                }
            }
             try {
-                mySQLController.addMessage(userID);
+                sqlController.addMessage(userID);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
             if(message.contains("славик") && message.contains("кто в топе")){
                 try {
-                    String user = mySQLController.getTopUsers(mySQLController.databaseConnect());
+                    String user = sqlController.getTopUsers(sqlController.databaseConnect());
                     execute(new SendMessage().setChatId(CHAT_ID).setParseMode("HTML").setText(user));
                 } catch (SQLException | TelegramApiException | IOException throwables) {
                     throwables.printStackTrace();

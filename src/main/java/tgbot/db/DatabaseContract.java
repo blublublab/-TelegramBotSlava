@@ -3,14 +3,15 @@ package tgbot.db;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class DatabaseContract {
+import static tgbot.MyTelegramBot.CHAT_ID;
 
+public class DatabaseContract {
     public static final String PRIMARY_KEY = "PRIMARY KEY";
 
     public static final String USERS = "users";
 
-    public static final String  TYPE_INT = "INTEGER";
-    public static final String  TYPE_BOOL = "TINYINT";
+    public static final String  TYPE_INT = "INT";
+    public static final String  TYPE_BOOL = "BOOLEAN";
     public static final String  TYPE_TEXT = "VARCHAR(45)";
 
 
@@ -21,44 +22,54 @@ public class DatabaseContract {
 
 
 
-   public String createDatabase(String dbName) {
-        return "CREATE DATABASE IF NOT EXISTS " + "`"  + dbName + "`" ;
+
+   public String createUserTable(){
+       String test  =  "CREATE TABLE IF NOT EXISTS \"" + CHAT_ID  + "\"." + USERS + "(" + USERID_COLUMN + " " + TYPE_INT +  " " +  PRIMARY_KEY  + ", "
+               + USER_MESSAGE_COUNT_COLUMN + " " + TYPE_INT   +  " DEFAULT 0, " + USER_FIRST_NAME_COLUMN + " " + TYPE_TEXT + ", " +
+               USER_OF_DAY_COLUMN + " " + TYPE_BOOL + ")";;
+       System.out.println(test);
+       return test;
+
+
    }
 
-   public String createUserTable(String dbName){
-       return   "CREATE TABLE IF NOT EXISTS " +  "`"  + dbName + "`." +USERS + "(" + USERID_COLUMN + " " + TYPE_INT +  " " +  PRIMARY_KEY  + ", "
-               + USER_MESSAGE_COUNT_COLUMN + " " + TYPE_INT  + ", " + USER_FIRST_NAME_COLUMN + " " + TYPE_TEXT + ", " +
-               USER_OF_DAY_COLUMN + " " + TYPE_BOOL + ")";
-
-
+   public String createSchema() {
+       String testScheme = "CREATE SCHEMA IF NOT EXISTS \"" + CHAT_ID + "\" AUTHORIZATION CURRENT_USER ";
+       return testScheme;
    }
 
 
-    public String setDataToDB(long userID, String userName, String dbName) throws IOException, SQLException {
+    public String setDataToDB(long userID, String userName) throws IOException, SQLException {
 
-        return "INSERT  `" + dbName + "`." + USERS + "(" +
+        String dbInsert = "INSERT  INTO\""+ CHAT_ID +"\"." + USERS + "(" +
                 USERID_COLUMN + ", " +
-                USER_FIRST_NAME_COLUMN + ") VALUES (" + userID + ", '" + userName + "')";
+                USER_FIRST_NAME_COLUMN + ", " + USER_MESSAGE_COUNT_COLUMN + ", " + USER_OF_DAY_COLUMN  + ") VALUES (" + userID + ", '" + userName + "', 0, FALSE)";
+        System.out.println(dbInsert);
+        return dbInsert;
     }
 
-    public String getUserFromDB(long userID , String dbName) {
-       return "SELECT * FROM `" + dbName + "`." + USERS + " WHERE " + USERID_COLUMN +  " = " + userID;
+    public String getUserFromDB(long userID) {
+       String selectfromdb =  "SELECT * FROM \"" + CHAT_ID + "\"." +   USERS + " WHERE " + USERID_COLUMN +  " = " + userID;
+        System.out.println(selectfromdb);;
+       return selectfromdb;
 
     }
     //TODO: Rewrite to more abstract SET DATA
-    public String setMessageToDB(long userID, String dbName){
-        return   "UPDATE `" + dbName +"`." + USERS + " SET " +
-                USER_MESSAGE_COUNT_COLUMN  + " = "  +
-                USER_MESSAGE_COUNT_COLUMN + " +1 WHERE " + USERID_COLUMN + " = " + userID;
+    public String setMessageToDB(long userID){
+       String setMessageCount =  "UPDATE \"" + CHAT_ID + "\"." + USERS + " SET " +
+               USER_MESSAGE_COUNT_COLUMN  + " = "  +
+               USER_MESSAGE_COUNT_COLUMN + " +1 WHERE " + USERID_COLUMN + " = " + userID;
+        System.out.println(setMessageCount);
+        return  setMessageCount;
 
 
     }
 
-    public String getTopUsers(String dbName){
+    public String getTopUsers(){
        String dbtest =   "SELECT "  +
                USER_FIRST_NAME_COLUMN  + ", " +
-               USER_MESSAGE_COUNT_COLUMN +" FROM `" + dbName + "`." +
-               USERS  + " ORDER BY " +
+               USER_MESSAGE_COUNT_COLUMN +" FROM \"" + CHAT_ID + "\"."
+               + USERS  +" ORDER BY " +
                USER_MESSAGE_COUNT_COLUMN + " DESC LIMIT 10" ;
         System.out.println(dbtest);
 

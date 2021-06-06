@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>src.tgbot</groupId>
-    <artifactId>src.tgbot</artifactId>
-    <version>1.0</version>
+    <groupId>org.example</groupId>
+    <artifactId>-telegrambotslava</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -96,7 +96,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>tgbot.Main</mainClass>
+                            <mainClass>org.example.tgbot.Main</mainClass>
                             <name>-TelegramBotSlava</name>
                         </program>
                     </programs>

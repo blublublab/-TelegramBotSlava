@@ -10,7 +10,6 @@ import tgbot.db.SQLController;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 import static tgbot.MessageChangeUtils.cropToRequest;
@@ -20,7 +19,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private String resultURL;
     private static final ArrayList<String> tempIDStorage = new ArrayList<>(1000);
     private String message;
-    private static ExecutorService executor = Executors.newFixedThreadPool(1);
+    private static ExecutorService executeImagesThread = new ThreadPoolExecutor(0, 3 ,0, TimeUnit.SECONDS, new SynchronousQueue<>());
     private SQLController sqlController;
 
 
@@ -87,28 +86,37 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                      message = transliterate(message);
                      return message;
                  };
-                 Callable<String> runHTTPClient = () -> pictureHTTPClient.getImageLink(message);
-                Future<String> future0 = executor.submit(getPreparedMessage);
-                Future<String> future1 = executor.submit(runHTTPClient);
+                 Callable<String> runHTTPClient = () -> {
+                     message = pictureHTTPClient.getImageLink("raz");
+                     return message;
+                 };
+                 Callable<Boolean> getPhoto = () -> {
 
+                        SendPhoto sendPhotoIm = new SendPhoto();
+                        sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
+                        try {
+                            sendPhoto(sendPhotoIm);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    return true;
+                };
+
+                Future<String> future0 = executeImagesThread.submit(getPreparedMessage);
+                Future<String> future1 = executeImagesThread.submit(runHTTPClient);
+                Future<Boolean> future2 = executeImagesThread.submit(getPhoto);
 
                 try {
-                    future0.get();
-                    resultURL = Objects.requireNonNull(future1).get();
+                    message =   future0.get();
+                    resultURL = future1.get();
+                    future2.get();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
-                if (resultURL != null) {
-                    SendPhoto sendPhotoIm = new SendPhoto();
-                    sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
-                    try {
-                        sendPhoto(sendPhotoIm);
-                    } catch (TelegramApiException e) {
-                        e.printStackTrace();
-                    }
 
-                }
             }
         }
     }

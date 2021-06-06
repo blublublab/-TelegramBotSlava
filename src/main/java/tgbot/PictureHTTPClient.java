@@ -33,7 +33,6 @@ public class PictureHTTPClient {
              responseBody = response.body().string();
              jsonResponse = new JSONObject(responseBody);
              int imageNumber = (int) (Math.random() * (jsonResponse.getJSONArray("value").length()-1) + 1);
-
             return jsonResponse.getJSONArray("value").getJSONObject(imageNumber).getString("url");
     }
 

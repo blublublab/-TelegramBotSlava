@@ -24,7 +24,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>Main</mainClass>
+                            <mainClass>main.java.Main</mainClass>
                             <name>workerBot</name>
                         </program>
                     </programs>

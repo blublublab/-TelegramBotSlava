@@ -1,8 +1,3 @@
-package tgbot.db;
-
-
-import tgbot.User;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -37,21 +32,21 @@ public class MySQLController {
 
     private void createDb() throws SQLException {
         statement = this.connection.createStatement();
-        statement.executeUpdate(this.dbContract.createDatabase(this.dbName));
-        statement.executeUpdate(this.dbContract.createUserTable(this.dbName));
+        statement.executeUpdate(dbContract.createDatabase(this.dbName));
+        statement.executeUpdate(dbContract.createUserTable(this.dbName));
     }
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
         if (!this.idExist(this.userObject.getID())) {
-            statement.executeUpdate(this.dbContract.setDataToDB(this.userObject.getID(), this.userObject.getName(), this.dbName));
-            System.out.println("user added to DB: " + this.userObject.getName());
+            statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName(), this.dbName));
+            System.out.println("user added to DB: " + userObject.getName());
         }
 
     }
 
     public void addMessage(long userID) throws SQLException {
         if (this.idExist(userID)) {
-            statement.executeUpdate(this.dbContract.setMessageToDB(this.userObject.getID(), this.dbName));
+            statement.executeUpdate(dbContract.setMessageToDB(this.userObject.getID(), this.dbName));
             System.out.println(userID + " added one message");
         }
 
@@ -60,7 +55,7 @@ public class MySQLController {
     }
 
     public boolean idExist(long userID) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(this.dbContract.getUserFromDB(userID, this.dbName));
+        ResultSet resultSet = statement.executeQuery(dbContract.getUserFromDB(userID, this.dbName));
         return resultSet.next();
     }
 

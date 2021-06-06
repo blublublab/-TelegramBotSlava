@@ -1,1 +1,1 @@
-worker: sh target/classes/tgbot
+worker: sh target/bin/tgbot

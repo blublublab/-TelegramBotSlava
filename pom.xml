@@ -96,7 +96,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>Main</mainClass>
+                            <mainClass>src.Main</mainClass>
                             <name>-TelegramBotSlava</name>
                         </program>
                     </programs>

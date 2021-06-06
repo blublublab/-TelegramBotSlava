@@ -32,7 +32,6 @@ public class SQLController {
             String url = props.getProperty("url");
             String user = props.getProperty("user");
             String password = props.getProperty("password");
-            String connectionSize = props.getProperty("MaxConnections");
             connection = DriverManager.getConnection(url, user, password);
             alreadyConnected = true;
             statement = connection.createStatement();

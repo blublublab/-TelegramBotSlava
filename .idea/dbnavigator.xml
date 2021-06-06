@@ -25,16 +25,8 @@
     <autoscroll-from-editor value="true" />
     <show-object-properties value="false" />
     <loaded-nodes>
-      <connection connection-id="4a8b298d-7808-4704-bf51-9b813a0f6be2">
-        <schema name="sys" object-types="function" />
-      </connection>
       <connection connection-id="471c7849-aed4-4b1f-bcb7-38fd440e0c43">
-        <schema name="-1001263717466" object-types="table, view, sequence, function, constraint, index, column, dataset trigger" />
-        <schema name="pg_catalog" object-types="function" />
-        <schema name="public" object-types="function" />
-      </connection>
-      <connection connection-id="c0ad4f9d-17bf-4ec6-bfc9-429a70b649b6">
-        <schema name="chatsdb" object-types="table, view, sequence, function" />
+        <schema name="-1001263717466" object-types="table, view" />
       </connection>
     </loaded-nodes>
   </component>

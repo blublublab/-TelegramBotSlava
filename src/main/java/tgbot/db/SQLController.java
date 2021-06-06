@@ -8,11 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
-
+//TODO: REWORK CONNECTIONS
 public class SQLController {
     private String dbName;
     private User userObject;
     private Connection connection;
+    boolean alreadyConnected = false;
     private DatabaseContract dbContract = new DatabaseContract();
     private Statement statement;
 
@@ -22,27 +23,34 @@ public class SQLController {
     }
 
     public Connection databaseConnect() throws IOException, SQLException {
-        Properties props = new Properties();
-        InputStream in = Files.newInputStream(Paths.get("database.properties"));
-        props.load(in);
-        in.close();
-        String url = props.getProperty("url");
-        String user = props.getProperty("user");
-        String password = props.getProperty("password");
-        String connectionSize = props.getProperty("MaxConnections");
-        connection = DriverManager.getConnection(url, user, password);
-        createUserTable();
-        return  connection;
-    }
+
+        if (!alreadyConnected) {
+            Properties props = new Properties();
+            InputStream in = Files.newInputStream(Paths.get("database.properties"));
+            props.load(in);
+            in.close();
+            String url = props.getProperty("url");
+            String user = props.getProperty("user");
+            String password = props.getProperty("password");
+            String connectionSize = props.getProperty("MaxConnections");
+            connection = DriverManager.getConnection(url, user, password);
+            alreadyConnected = true;
+        }
+            createUserTable();
+            return connection;
+        }
+
 
     private void createUserTable() throws SQLException {
         statement = connection.createStatement();
         statement.executeUpdate(dbContract.createSchema());
         statement.executeUpdate(dbContract.createUserTable());
+
     }
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
         if (!this.idExist(this.userObject.getID())) {
+            statement = connection.createStatement();
             statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName()));
             System.out.println("user added to DB: " + userObject.getName());
         }

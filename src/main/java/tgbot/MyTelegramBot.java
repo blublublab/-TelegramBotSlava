@@ -44,7 +44,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                message = update.getMessage().getText().toLowerCase();
                try {
 
-                   sqlController.setUserToDB(sqlController.databaseConnect()    );
+                   sqlController.setUserToDB(sqlController.databaseConnect());
                    if (!sqlController.idExist(userID)) {
                        tempIDStorage.add(String.valueOf(userID));
                    }

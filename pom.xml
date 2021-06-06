@@ -96,7 +96,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>Main</mainClass>
+                            <mainClass>org.bots.tgbot.Main</mainClass>
                             <name>tgbot</name>
                         </program>
                     </programs>

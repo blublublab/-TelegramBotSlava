@@ -20,7 +20,8 @@ public class PictureHTTPClient {
     private static final String RAPID_HOST = "contextualwebsearch-websearch-v1.p.rapidapi.com";
 
         public String getImageLink(String inputSearchText) throws IOException, JSONException {
-        int pageNumber  = (int) (Math.random()*10 + 1);
+        // int pageNumber  = (int) (Math.random()*10 + 1);
+        int pageNumber = 1;
         Request request = new Request.Builder()
                 .url("https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/ImageSearchAPI?q="  + inputSearchText +"&pageNumber="+ pageNumber +"&pageSize=50&autoCorrect=true&safeSearch=false")
                 .get()

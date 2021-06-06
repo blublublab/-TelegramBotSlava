@@ -95,8 +95,8 @@
                     <assembleDirectory>target</assembleDirectory>
                     <programs>
                         <program>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>tgbot.Main</mainClass>
+
+                            <mainClass>Main</mainClass>
                             <name>TelegramBotSlava</name>
                         </program>
                     </programs>

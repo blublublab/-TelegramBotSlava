@@ -98,7 +98,6 @@
 
                             <mainClass>Main</mainClass>
                             <name>-TelegramBotSlava</name>
-                            <id>1.0</id>
                         </program>
                     </programs>
                 </configuration>

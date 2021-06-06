@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Properties;
-
+/*
 public class MySQLController {
     private String dbName;
     private User userObject;
@@ -78,3 +78,4 @@ public class MySQLController {
     return result.toString();
     }
 }
+*/

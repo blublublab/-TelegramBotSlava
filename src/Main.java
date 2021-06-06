@@ -5,7 +5,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 public class Main {
 
     public static void main(String[] args) {
-        ApiContextInitializer.init();
+       /* ApiContextInitializer.init();
 
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
 
@@ -15,5 +15,7 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("Bot started");
+        */
+
     }
 }

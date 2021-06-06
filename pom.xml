@@ -96,7 +96,7 @@
                     <programs>
                         <program>
 
-                            <mainClass>org.tgbot.Main</mainClass>
+                            <mainClass>Main</mainClass>
                             <name>-TelegramBotSlava</name>
                         </program>
                     </programs>

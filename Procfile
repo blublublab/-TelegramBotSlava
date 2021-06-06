@@ -1,1 +1,1 @@
-worker: sh target/classes/slavicBot
+worker: sh target/classes/tgbot

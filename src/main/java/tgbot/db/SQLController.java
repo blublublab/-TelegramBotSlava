@@ -2,11 +2,15 @@ package tgbot.db;
 
 import tgbot.User;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 //TODO: REWORK CONNECTIONS
 public class SQLController {
@@ -14,7 +18,6 @@ public class SQLController {
     private User userObject;
     private Connection connection;
     boolean alreadyConnected = false;
-    private DatabaseContract dbContract = new DatabaseContract();
     private Statement statement;
     private static SQLController instance;
 
@@ -45,15 +48,20 @@ public class SQLController {
             alreadyConnected = true;
             statement = connection.createStatement();
         }
-            createUserTable();
+            createTables();
             return connection;
         }
 
 
-    private void createUserTable() throws SQLException {
+    private void createTables() throws SQLException {
 
-        statement.executeUpdate(dbContract.createSchema());
-        statement.executeUpdate(dbContract.createUserTable());
+        statement.executeUpdate(DatabaseContract.createSchema());
+        statement.executeUpdate();
+        statement.executeUpdate(dbContract.createChatTable());
+
+        statement.executeUpdate(dbContract.fillChatTable("Хохол дня"));
+
+
 
     }
 
@@ -67,14 +75,27 @@ public class SQLController {
 
     public void addMessage(long userID) throws SQLException {
         if (this.idExist(userID)) {
-            statement.executeUpdate(dbContract.setMessageToDB(userObject.getID()));
+            statement.executeUpdate(dbContract.setMessageToDB(userID));
             System.out.println(userID + " added one message");
         }
 
 
-
     }
+    public String getTopOfTheDay(long userID) throws SQLException {
+        ResultSet resultSet  = statement.executeQuery(ServerDatabaseContract.getTopUserOfTheDay());
+        String userOfDay = "";
+        String testData = resultSet.getString(DatabaseContract.COMMAND_DATE); // TODO: REWORK TO SAME TYPE
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
+        String formattedString = ZonedDateTime.now().format(formatter);
+                if(resultSet.next() && testData.equals(formattedString) ) { // TODO: rework if data > 24  then remake
+                   userOfDay = resultSet.getString(DatabaseContract.USER_OF_DAY_COLUMN);
+                } else {
 
+                    statement.executeUpdate(dbContract.fillChatTableByUser(formattedString, userID));
+
+                }
+                return userOfDay;
+    }
     public boolean idExist(long userID) throws SQLException {
         ResultSet resultSet = statement.executeQuery(dbContract.getUserFromDB(userID));
         return resultSet.next();

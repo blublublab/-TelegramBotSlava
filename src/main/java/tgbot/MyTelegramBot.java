@@ -73,7 +73,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 }
             }
 
-            if (message.contains("славик") && message.contains("код дай")) {
+            if (message.contains("славик") && message.contains("код") && message.contains("дай")) {
                 try {
                     execute(new SendMessage().setChatId(CHAT_ID).setText("```  ```"));
                 } catch (TelegramApiException e) {
@@ -132,11 +132,11 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 }
 
 
-               /* CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
+               CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
                         .toArray(CompletableFuture[]::new);
                 CompletableFuture.allOf(futures).join();
 
-                */
+
                 // int recievedThreads = 0;
                  /*   while (recievedThreads < 3) {
                         Future<String> picture = service.take();
@@ -152,6 +152,16 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                   */
 
 
+            }
+
+            if(message.contains("славик") && message.contains("хохол")|| message.contains("хохла") &&  message.contains("дня")) {
+                try {
+                  String responseTopOfTheDay =   sqlController.getTopOfTheDay(userID);
+                    execute(new SendMessage().setChatId(CHAT_ID).setText("Хохол дня на сегодня:  " + responseTopOfTheDay ));
+
+                } catch (SQLException | TelegramApiException throwables) {
+                    throwables.printStackTrace();
+                }
             }
         }
     }

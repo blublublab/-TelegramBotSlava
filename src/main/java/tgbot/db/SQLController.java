@@ -2,13 +2,11 @@ package tgbot.db;
 
 import tgbot.User;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
@@ -20,7 +18,8 @@ public class SQLController {
     boolean alreadyConnected = false;
     private Statement statement;
     private static SQLController instance;
-
+    private final ServerDatabaseContract serverDatabaseContract = new ServerDatabaseContract();;
+    private final UsersDatabaseContract usersDatabaseContract = new UsersDatabaseContract();
 
     public static SQLController getInstance(long dbName, User userObject) {
         if (instance == null) {
@@ -48,62 +47,55 @@ public class SQLController {
             alreadyConnected = true;
             statement = connection.createStatement();
         }
+            statement.executeUpdate(DatabaseContract.createSchema());
             createTables();
             return connection;
         }
 
 
     private void createTables() throws SQLException {
-
-        statement.executeUpdate(DatabaseContract.createSchema());
-        statement.executeUpdate();
-        statement.executeUpdate(dbContract.createChatTable());
-
-        statement.executeUpdate(dbContract.fillChatTable("Хохол дня"));
-
-
-
+       statement.executeUpdate( serverDatabaseContract.createTable());
+       statement.executeUpdate( usersDatabaseContract.createTable());
     }
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
         if (!this.idExist(this.userObject.getID())) {
-            statement.executeUpdate(dbContract.setDataToDB(userObject.getID(), userObject.getName()));
-            System.out.println("user added to DB: " + userObject.getName());
+            statement.executeUpdate(usersDatabaseContract.fillTable(userObject.getID(), userObject.getName()));
         }
 
     }
 
-    public void addMessage(long userID) throws SQLException {
+    public void addMessageCount(long userID) throws SQLException {
         if (this.idExist(userID)) {
-            statement.executeUpdate(dbContract.setMessageToDB(userID));
+            statement.executeUpdate(usersDatabaseContract.addMessageCountToDB(userID));
             System.out.println(userID + " added one message");
         }
 
 
     }
     public String getTopOfTheDay(long userID) throws SQLException {
-        ResultSet resultSet  = statement.executeQuery(ServerDatabaseContract.getTopUserOfTheDay());
+        ResultSet resultSet  = statement.executeQuery(serverDatabaseContract.getTopUserOfTheDay());
         String userOfDay = "";
+        resultSet.next();
         String testData = resultSet.getString(DatabaseContract.COMMAND_DATE); // TODO: REWORK TO SAME TYPE
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
         String formattedString = ZonedDateTime.now().format(formatter);
                 if(resultSet.next() && testData.equals(formattedString) ) { // TODO: rework if data > 24  then remake
                    userOfDay = resultSet.getString(DatabaseContract.USER_OF_DAY_COLUMN);
                 } else {
-
-                    statement.executeUpdate(dbContract.fillChatTableByUser(formattedString, userID));
+                    statement.executeUpdate(serverDatabaseContract.fillServerTableByUser(formattedString, userID));
 
                 }
                 return userOfDay;
     }
     public boolean idExist(long userID) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(dbContract.getUserFromDB(userID));
+        ResultSet resultSet = statement.executeQuery(usersDatabaseContract.getUserFromDB(userID));
         return resultSet.next();
     }
 
-    public String getTopUsers(Connection connection) throws SQLException {
+    public String getTopUsers() throws SQLException {
        StringBuilder result = new StringBuilder();
-       ResultSet resultSet = statement.executeQuery(dbContract.getTopUsers());
+       ResultSet resultSet = statement.executeQuery(serverDatabaseContract.getTopUsers());
        int i = 0;
        while(resultSet.next()){
 

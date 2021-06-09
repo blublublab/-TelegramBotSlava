@@ -54,8 +54,11 @@ public class SQLController {
 
 
     private void createTables() throws SQLException {
-       statement.executeUpdate( serverDatabaseContract.createTable());
-       statement.executeUpdate( usersDatabaseContract.createTable());
+       statement.executeUpdate( serverDatabaseContract.createTable(0));
+       statement.executeUpdate( usersDatabaseContract.createTable(0));
+
+       statement.executeUpdate( serverDatabaseContract.fillTable(0, "Хохол дня"));
+        System.out.println(serverDatabaseContract.fillTable(0, "Хохол дня"));
     }
 
     public void setUserToDB(Connection connection) throws IOException, SQLException {
@@ -77,7 +80,7 @@ public class SQLController {
         ResultSet resultSet  = statement.executeQuery(serverDatabaseContract.getTopUserOfTheDay());
         String userOfDay = "";
         resultSet.next();
-        String testData = resultSet.getString(DatabaseContract.COMMAND_DATE); // TODO: REWORK TO SAME TYPE
+        String testData = resultSet.getString(DatabaseContract.COMMAND_DATE_COLUMN); // TODO: REWORK TO SAME TYPE
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
         String formattedString = ZonedDateTime.now().format(formatter);
                 if(resultSet.next() && testData.equals(formattedString) ) { // TODO: rework if data > 24  then remake

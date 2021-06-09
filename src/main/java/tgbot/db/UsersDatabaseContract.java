@@ -2,7 +2,12 @@ package tgbot.db;
 
 import static tgbot.MyTelegramBot.CHAT_ID;
 
-public class UsersDatabaseContract implements DatabaseContract {
+public class UsersDatabaseContract extends DatabaseContract {
+
+    // @Override
+    public String createTable(int commandId) {
+        return null;
+    } // Util ;
 
     @Override
     public  String createTable() {

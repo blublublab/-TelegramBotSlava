@@ -5,8 +5,11 @@ import org.telegram.telegrambots.meta.generics.LongPollingBot;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import tgbot.MyTelegramBot;
 
+
 public class Main {
     public static void main(String[] args) {
+
+
         try {
             TelegramLongPollingBot telegramLongPollingBot = new MyTelegramBot();
             LongPollingBot longPollingBot = telegramLongPollingBot;

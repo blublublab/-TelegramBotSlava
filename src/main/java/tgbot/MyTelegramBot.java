@@ -5,6 +5,7 @@ import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import tgbot.db.ResultConstructor;
 import tgbot.db.SQLController;
 
 import java.io.IOException;
@@ -13,24 +14,35 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static tgbot.MessageChangeUtils.cropToRequest;
 import static tgbot.MessageChangeUtils.transliterate;
 
+
 public class MyTelegramBot extends TelegramLongPollingBot {
     private String resultURL;
-    private static final ArrayList<String> tempIDStorage = new ArrayList<>(1000); //TODO: REWORK HASHMAP OR OBJECTS
+    private static final ArrayList<Long> tempIDStorage = new ArrayList<>(1000); //TODO: REWORK HASHMAP OR OBJECTS
     private String message;
     private static ExecutorService executeImagesThread;
     private SQLController sqlController;
     private String preparedMessage;
 
-    public static final String BOT_USERNAME = "slavahoholBot";
-    public static final String BOT_TOKEN = "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
-    public static long CHAT_ID;
+    private static final String BOT_USERNAME = "slavahoholBot";
 
-    final Object lock = new Object();
+    public static long getChatId() {
+        return CHAT_ID;
+    }
+
+    private static final String BOT_TOKEN = "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
+    private static long CHAT_ID;
+
+
+    public static ArrayList<Long> getTempIDStorage() {
+        return tempIDStorage;
+    }
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -45,10 +57,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     sqlController = SQLController.getInstance(userID, userObject);
                     sqlController.databaseConnect();
                     message = update.getMessage().getText().toLowerCase();
-                    sqlController.setUserToDB(sqlController.databaseConnect());
+                    sqlController.setUserToDB(sqlController.databaseConnect(), userID);
 
-                    if (sqlController.idExist(userID)) {
-                        tempIDStorage.add(String.valueOf(userID));
+                    if (!sqlController.getUserByID(userID).equals("")) {
+                        tempIDStorage.add(userID);
                     }
                 }
                     sqlController.addMessageCount(userID);
@@ -62,9 +74,20 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         execute(new SendMessage().setChatId(CHAT_ID).setText("```  ```"));
 
                 }
-                if (message.contains("славик") && message.contains("хохол") || message.contains("хохла") && message.contains("дня")) {
-                    String responseTopOfTheDay = sqlController.getTopOfTheDay(userID); //TODO: Get all IDS and then getTop
-                    execute(new SendMessage().setChatId(CHAT_ID).setText("Хохол дня на сегодня:  " + responseTopOfTheDay));
+                if (message.contains("славик") && message.contains("дня")) {
+                    if(message.contains("добавь")) {
+                        message = MessageChangeUtils.cropToRequest(message);
+                        sqlController.setTopOfTheDay(sqlController.getLastTopOfDayIndex()+1, message);
+                    }
+                    ResultConstructor topOfTheDay = sqlController.getTopOfTheDay(userID, 0);
+                    String messageConcat;
+
+                    if(!topOfTheDay.isNewToList()) {
+                         messageConcat = ". До следующего выбора " + + topOfTheDay.getTimeToNext() +  " часа";
+                    } else{
+                        messageConcat = "";
+                    }
+                        execute(new SendMessage().setChatId(CHAT_ID).setText(topOfTheDay.getCommand() + " на сегодня  : " + topOfTheDay.getUser() + messageConcat));
 
                 }
 
@@ -73,7 +96,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     executeImagesThread = Executors.newFixedThreadPool(3);
 
                     Runnable getPreparedMessage = () -> {
-                        synchronized (lock) {
+
 
                             try {
                                 message = cropToRequest(message);
@@ -82,7 +105,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                             }
 
                             preparedMessage = transliterate(message);
-                        }
+
                     };
                     Runnable runHTTPClient = () -> {
 
@@ -110,12 +133,6 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                             runHTTPClient,
                             getPhoto);
 
-                    ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(1, 3,
-                            0L, TimeUnit.SECONDS, new SynchronousQueue<>());
-
-                    for (Runnable runnable : runnables) {
-                        threadPoolExecutor.submit(runnable);
-                    }
 
                     CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
                             .toArray(CompletableFuture[]::new);

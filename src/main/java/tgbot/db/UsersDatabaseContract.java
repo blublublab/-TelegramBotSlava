@@ -1,24 +1,21 @@
 package tgbot.db;
 
-import static tgbot.MyTelegramBot.CHAT_ID;
+import tgbot.MyTelegramBot;
 
-public class UsersDatabaseContract extends DatabaseContract {
+public class UsersDatabaseContract implements DatabaseContract {
 
-    // @Override
-    public String createTable(int commandId) {
-        return null;
-    } // Util ;
 
     @Override
-    public  String createTable() {
-        return   "CREATE TABLE IF NOT EXISTS \"" + CHAT_ID  + "\"." + USERS + "(" + USERID_COLUMN + " " + TYPE_INT +  " " +  PRIMARY_KEY  + ", "
+    public  String createTable(int notUsableID) {
+
+        return  "CREATE TABLE IF NOT EXISTS \"" + MyTelegramBot.getChatId() + "\"." + USERS + "(" + USERID_COLUMN + " " + TYPE_INT + "  " + PRIMARY_KEY  + ", "
                 + USER_MESSAGE_COUNT_COLUMN + " " + TYPE_INT   +  " DEFAULT 0, " + USER_FIRST_NAME_COLUMN + " " + TYPE_TEXT + ", " +
                 USER_OF_DAY_COLUMN + " " + TYPE_BOOL + ")";
     }
 
     @Override
     public String fillTable(long userID, String userName) {
-        return "INSERT  INTO\""+ CHAT_ID +"\"." + USERS + "(" +
+        return "INSERT  INTO \""+ MyTelegramBot.getChatId() +"\"." + USERS + "(" +
                 USERID_COLUMN + ", " +
                 USER_FIRST_NAME_COLUMN + ", " +
                 USER_MESSAGE_COUNT_COLUMN + ", " +
@@ -27,18 +24,22 @@ public class UsersDatabaseContract extends DatabaseContract {
 
     }
 
+    @Override
+    public String columnsSize() {
+        return "SELECT  COUNT(" + COMMAND_ID_COLUMN + ") FROM \"" + MyTelegramBot.getChatId() + "\"." + USERS;
+    }
 
 
     public  String getUserFromDB(long userID) {
 
-        return  "SELECT * FROM \"" + CHAT_ID + "\"." +   USERS + " WHERE " + USERID_COLUMN +  " = " + userID;
+        return  "SELECT * FROM \"" + MyTelegramBot.getChatId() + "\"." +   USERS + " WHERE " + USERID_COLUMN +  " = " + userID;
 
     }
 
 
 
     public  String addMessageCountToDB(long userID){
-        return "UPDATE \"" + CHAT_ID + "\"." + USERS + " SET " +
+        return "UPDATE \"" + MyTelegramBot.getChatId() + "\"." + USERS + " SET " +
                 USER_MESSAGE_COUNT_COLUMN  + " = "  +
                 USER_MESSAGE_COUNT_COLUMN + " +1 WHERE " + USERID_COLUMN + " = " + userID;
 

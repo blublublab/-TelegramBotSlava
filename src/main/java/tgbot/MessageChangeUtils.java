@@ -62,8 +62,11 @@ public  class MessageChangeUtils {
     };
     public static String cropToRequest(String message) throws UnsupportedEncodingException {
         ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
-        wordsArrayList.remove("славик");
-        wordsArrayList.remove("выгрузи");
+        wordsArrayList.remove(0);
+        wordsArrayList.remove(1);
+        if(message.contains("активность")){
+            wordsArrayList.remove(2);
+        }
         StringBuilder stringBuilderRequest = new StringBuilder();
         for (int i = 0, j = wordsArrayList.size(); i < wordsArrayList.size(); i++) {
 

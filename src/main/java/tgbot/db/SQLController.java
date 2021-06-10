@@ -1,5 +1,6 @@
 package tgbot.db;
 
+import tgbot.MyTelegramBot;
 import tgbot.User;
 
 import java.io.IOException;
@@ -7,9 +8,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
 //TODO: REWORK CONNECTIONS
 public class SQLController {
     private String dbName;
@@ -56,45 +58,64 @@ public class SQLController {
     private void createTables() throws SQLException {
        statement.executeUpdate( serverDatabaseContract.createTable(0));
        statement.executeUpdate( usersDatabaseContract.createTable(0));
-
        statement.executeUpdate( serverDatabaseContract.fillTable(0, "Хохол дня"));
-        System.out.println(serverDatabaseContract.fillTable(0, "Хохол дня"));
     }
 
-    public void setUserToDB(Connection connection) throws IOException, SQLException {
-        if (!this.idExist(this.userObject.getID())) {
+    public void setUserToDB(Connection connection, long userID) throws IOException, SQLException {
+        if (getUserByID(userID).equals("")) {
             statement.executeUpdate(usersDatabaseContract.fillTable(userObject.getID(), userObject.getName()));
         }
 
     }
 
     public void addMessageCount(long userID) throws SQLException {
-        if (this.idExist(userID)) {
+        if (!getUserByID(userID).equals("")) {
             statement.executeUpdate(usersDatabaseContract.addMessageCountToDB(userID));
             System.out.println(userID + " added one message");
         }
 
 
     }
-    public String getTopOfTheDay(long userID) throws SQLException {
-        ResultSet resultSet  = statement.executeQuery(serverDatabaseContract.getTopUserOfTheDay());
-        String userOfDay = "";
-        resultSet.next();
-        String testData = resultSet.getString(DatabaseContract.COMMAND_DATE_COLUMN); // TODO: REWORK TO SAME TYPE
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
-        String formattedString = ZonedDateTime.now().format(formatter);
-                if(resultSet.next() && testData.equals(formattedString) ) { // TODO: rework if data > 24  then remake
-                   userOfDay = resultSet.getString(DatabaseContract.USER_OF_DAY_COLUMN);
-                } else {
-                    statement.executeUpdate(serverDatabaseContract.fillServerTableByUser(formattedString, userID));
+    public ResultConstructor getTopOfTheDay(long userID, int commandID) throws SQLException {
 
+        boolean isNewInList = false;
+
+        ResultSet resultSet2  = statement.executeQuery(serverDatabaseContract.getTopUserOfTheDay(commandID));
+        int userOfDay = 0;
+        Timestamp requestTS = new Timestamp(new Date().getTime());
+        String command = "";
+        int remainingHours = 0;
+
+        if (resultSet2.next()){
+
+                Timestamp serverTS = resultSet2.getTimestamp(DatabaseContract.COMMAND_DATE_COLUMN);
+
+                long dayLength = TimeUnit.HOURS.toMillis(24);
+                if(requestTS.getTime() -  serverTS.getTime() > dayLength ) {
+                    int randomChoose = (int) (Math.random()*(MyTelegramBot.getTempIDStorage().size()-1));
+                    userID =  MyTelegramBot.getTempIDStorage().get(randomChoose);
+                    statement.executeUpdate(serverDatabaseContract.fillServerTableByUser(commandID, userID));
+                    isNewInList = true;
                 }
-                return userOfDay;
+            resultSet2 = statement.executeQuery(serverDatabaseContract.getTopUserOfTheDay(commandID));
+                resultSet2.next();
+            userOfDay =  resultSet2.getInt(DatabaseContract.USERID_COLUMN);
+            command = resultSet2.getString(DatabaseContract.COMMAND_TEXT_COLUMN);
+            remainingHours =  24 - (int) TimeUnit.MILLISECONDS.toHours(serverTS.getTime() - requestTS.getTime());
+            System.out.println(userOfDay);
+
+        }
+
+        return new ResultConstructor(getUserByID(userOfDay), command,remainingHours, isNewInList);
+        }
+
+
+    public void setTopOfTheDay(int commandID, String commandName) throws SQLException {
+        statement.executeUpdate(serverDatabaseContract.fillTable(commandID, commandName));
     }
-    public boolean idExist(long userID) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(usersDatabaseContract.getUserFromDB(userID));
-        return resultSet.next();
-    }
+
+
+
 
     public String getTopUsers() throws SQLException {
        StringBuilder result = new StringBuilder();
@@ -109,4 +130,22 @@ public class SQLController {
        }
     return result.toString();
     }
+
+    public int getLastTopOfDayIndex() throws SQLException {
+       ResultSet resultSet =   statement.executeQuery(serverDatabaseContract.columnsSize());
+        int lastIndex = 0;
+       if(resultSet.next()){
+        lastIndex = resultSet.getInt(0);
+       }
+       return lastIndex;
+   }
+
+   public String getUserByID(long userID) throws SQLException {
+       ResultSet resultSet = statement.executeQuery(usersDatabaseContract.getUserFromDB(userID));
+       if(!resultSet.next()) {
+         return "";
+       }
+       return resultSet.getString(DatabaseContract.USER_FIRST_NAME_COLUMN);
+   }
+
 }

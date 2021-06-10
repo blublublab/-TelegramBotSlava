@@ -1,6 +1,7 @@
 package tgbot.db;
 
-import static tgbot.MyTelegramBot.CHAT_ID;
+import tgbot.MyTelegramBot;
+
 public  interface DatabaseContract {
     String PRIMARY_KEY = "PRIMARY KEY";
 
@@ -23,11 +24,10 @@ public  interface DatabaseContract {
     String COMMAND_DATE_COLUMN = "command_date";
 
     static String createSchema() {
-        return "CREATE SCHEMA IF NOT EXISTS \"" + CHAT_ID + "\" AUTHORIZATION CURRENT_USER ";
+        return "CREATE SCHEMA IF NOT EXISTS \"" + MyTelegramBot.getChatId() + "\" AUTHORIZATION CURRENT_USER ";
     }
 
     String createTable(int commandId);
-
     String fillTable(long userID, String cmd);
-
+    String columnsSize();
 }

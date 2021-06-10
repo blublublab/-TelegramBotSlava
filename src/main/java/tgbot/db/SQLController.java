@@ -34,7 +34,7 @@ public class SQLController {
     public Connection databaseConnect() throws IOException, SQLException {
 
         if (!alreadyConnected) {
-            connection = DriverManager.getConnection(System.getenv("DATABASE_URL"));
+            connection = DriverManager.getConnection(System.getenv("DB_URL"), System.getenv("DB_USER"), System.getenv("DB_PASSWORD"));
             alreadyConnected = true;
             statement = connection.createStatement();
         }

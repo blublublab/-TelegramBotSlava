@@ -4,12 +4,8 @@ import tgbot.MyTelegramBot;
 import tgbot.User;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Date;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 //TODO: REWORK CONNECTIONS
@@ -38,14 +34,7 @@ public class SQLController {
     public Connection databaseConnect() throws IOException, SQLException {
 
         if (!alreadyConnected) {
-            Properties props = new Properties();
-            InputStream in = Files.newInputStream(Paths.get("database.properties"));
-            props.load(in);
-            in.close();
-            String url = props.getProperty("url");
-            String user = props.getProperty("user");
-            String password = props.getProperty("password");
-            connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(System.getenv("DATABASE_URL"));
             alreadyConnected = true;
             statement = connection.createStatement();
         }

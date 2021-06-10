@@ -28,7 +28,7 @@ public class PictureHTTPClient {
 
     }
 
-    private static final String RAPID_KEY = "89b3ea805bmsh5a88d264a2dbd96p16d752jsnb8c10be4448c";
+    private static final String RAPID_KEY = System.getenv("RAPID_KEY");
     private static final String RAPID_HOST = "contextualwebsearch-websearch-v1.p.rapidapi.com";
 
     public String getImageLink(String inputSearchText) throws IOException, JSONException {

@@ -1,15 +1,19 @@
 package tgbot;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgbot.db.ResultConstructor;
 import tgbot.db.SQLController;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +25,9 @@ import java.util.concurrent.Executors;
 import static tgbot.MessageChangeUtils.cropToRequest;
 import static tgbot.MessageChangeUtils.transliterate;
 
-
 public class MyTelegramBot extends TelegramLongPollingBot {
+
+
     private String resultURL;
     private static final ArrayList<Long> tempIDStorage = new ArrayList<>(1000); //TODO: REWORK HASHMAP OR OBJECTS
     private String message;
@@ -30,14 +35,14 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     private SQLController sqlController;
     private String preparedMessage;
 
-    private static final String BOT_USERNAME = "slavahoholBot";
+    private static final String BOT_USERNAME = System.getenv("TELEGRAM_BOT_NAME");
 
-    public static long getChatId() {
+    public static String getChatId() {
         return CHAT_ID;
     }
+    private static final String BOT_TOKEN = System.getenv("TELEGRAM_TOKEN");
+    private static String CHAT_ID;
 
-    private static final String BOT_TOKEN = "1613889029:AAFpVn9y3VvETCqluixVrmzmOv1N-cr1UaE";
-    private static long CHAT_ID;
 
 
     public static ArrayList<Long> getTempIDStorage() {
@@ -47,7 +52,7 @@ public class MyTelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        CHAT_ID = update.getMessage().getChatId();
+        CHAT_ID = update.getMessage().getChatId().toString();
         try {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 String userName = update.getMessage().getFrom().getFirstName();
@@ -67,11 +72,20 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
                 if (message.contains("славик") && message.contains("кто в топе")) {
                         String user = sqlController.getTopUsers();
-                        execute(new SendMessage().setChatId(CHAT_ID).setParseMode("HTML").setText(user));
+                        execute( SendMessage.builder()
+                                .chatId(CHAT_ID)
+                                .parseMode("HTML")
+                                .text(user)
+                                .build());
                 }
 
                 if (message.contains("славик") && message.contains("код") && message.contains("дай")) {
-                        execute(new SendMessage().setChatId(CHAT_ID).setText("```  ```"));
+
+
+                        execute(SendMessage.builder()
+                                .chatId(CHAT_ID)
+                                .text("```  ```")
+                                .build());
 
                 }
                 if (message.contains("славик") && message.contains("дня")) {
@@ -87,7 +101,10 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     } else{
                         messageConcat = "";
                     }
-                        execute(new SendMessage().setChatId(CHAT_ID).setText(topOfTheDay.getCommand() + " на сегодня  : " + topOfTheDay.getUser() + messageConcat));
+                        execute(SendMessage.builder()
+                                .chatId(CHAT_ID)
+                                .text(topOfTheDay.getCommand() + " на сегодня  : " + topOfTheDay.getUser() + messageConcat)
+                                .build());
 
                 }
 
@@ -116,13 +133,13 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         }
                     };
                     Runnable getPhoto = () -> {
-
-                        SendPhoto sendPhotoIm = new SendPhoto();
-                        sendPhotoIm.setChatId(MyTelegramBot.CHAT_ID).setPhoto(resultURL);
-
                         try {
-                            sendPhoto(sendPhotoIm);
-                        } catch (TelegramApiException telegramApiException) {
+                            URL url = new URL(resultURL);
+                            InputStream in = new BufferedInputStream(url.openStream());
+                            InputFile photo = new InputFile().setMedia(in, "image");
+                            execute(SendPhoto.builder().photo(photo).build());
+
+                        } catch (TelegramApiException | IOException telegramApiException) {
                             telegramApiException.printStackTrace();
                         }
                     };

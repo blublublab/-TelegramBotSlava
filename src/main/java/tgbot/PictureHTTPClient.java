@@ -15,25 +15,14 @@ public class PictureHTTPClient {
     private OkHttpClient okHttpClientSend;
     static PictureHTTPClient instance;
 
-    public static PictureHTTPClient getInstance() {
-        if (instance == null) {
-            instance = new PictureHTTPClient();
-        }
-        return instance;
-    }
 
-    ;
 
-    private PictureHTTPClient() {
-
-    }
 
     private static final String RAPID_KEY = System.getenv("RAPID_KEY");
     private static final String RAPID_HOST = "contextualwebsearch-websearch-v1.p.rapidapi.com";
 
     public String getImageLink(String inputSearchText) throws IOException, JSONException {
                  okHttpClientSend = new OkHttpClient();
-                 okHttpClientSend.setRetryOnConnectionFailure(true);
 
             // int pageNumber  = (int) (Math.random()*10 + 1);
         int pageNumber = 1;
@@ -48,7 +37,8 @@ public class PictureHTTPClient {
               responseBody = response.body().string();
              jsonResponse = new JSONObject(responseBody);
              int imageNumber = (int) (Math.random() * (jsonResponse.getJSONArray("value").length()-1) + 1);
-             String answer =  jsonResponse.getJSONArray("value").getJSONObject(imageNumber).getString("url");;
+             String answer =  jsonResponse.getJSONArray("value").getJSONObject(imageNumber).getString("url");
+
             return answer;
     }
 

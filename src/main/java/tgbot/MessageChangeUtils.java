@@ -1,10 +1,7 @@
 package tgbot;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public  class MessageChangeUtils {
 
@@ -61,9 +58,9 @@ public  class MessageChangeUtils {
 
     };
     public static String cropToRequest(String message) throws UnsupportedEncodingException {
-        ArrayList<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
+        List<String> wordsArrayList = new ArrayList<>(Arrays.asList(message.split(" ")));
         wordsArrayList.remove(0);
-        wordsArrayList.remove(1);
+        wordsArrayList.remove(0);
         if(message.contains("активность")){
             wordsArrayList.remove(2);
         }

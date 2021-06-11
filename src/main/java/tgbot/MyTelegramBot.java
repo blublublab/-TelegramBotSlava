@@ -5,7 +5,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import tgbot.db.ResultConstructor;
 import tgbot.db.SQLController;
 
@@ -14,13 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static tgbot.MessageChangeUtils.cropToRequest;
 import static tgbot.MessageChangeUtils.transliterate;
@@ -28,7 +23,6 @@ import static tgbot.MessageChangeUtils.transliterate;
 public class MyTelegramBot extends TelegramLongPollingBot {
 
 
-    private String resultURL;
     private static final ArrayList<Long> tempIDStorage = new ArrayList<>(1000); //TODO: REWORK HASHMAP OR OBJECTS
     private String message;
     private static ExecutorService executeImagesThread;
@@ -109,73 +103,56 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                 }
 
                 if (message.contains("славик") && message.contains("выгрузи")) {
-                    PictureHTTPClient pictureHTTPClient = PictureHTTPClient.getInstance();
-                    executeImagesThread = Executors.newFixedThreadPool(3);
-
-                    Runnable getPreparedMessage = () -> {
-
-
-                            try {
-                                message = cropToRequest(message);
-                            } catch (UnsupportedEncodingException unsupportedEncodingException) {
-                                unsupportedEncodingException.printStackTrace();
-                            }
-
-                            preparedMessage = transliterate(message);
-
-                    };
-                    Runnable runHTTPClient = () -> {
-
+                    PictureHTTPClient pictureHTTPClient = new PictureHTTPClient();
+                    final InputStream[] linkToImage = new InputStream[1];
+                    CompletableFuture<InputFile> future =  CompletableFuture.supplyAsync(() -> {
                         try {
-                            resultURL = pictureHTTPClient.getImageLink(preparedMessage);
-                        } catch (IOException ioException) {
-                            ioException.printStackTrace();
+                            message = cropToRequest(message);
+                        } catch (UnsupportedEncodingException unsupportedEncodingException) {
+                            unsupportedEncodingException.printStackTrace();
                         }
-                    };
-                    Runnable getPhoto = () -> {
-                        try {
-                            URL url = new URL(resultURL);
-                            InputStream in = new BufferedInputStream(url.openStream());
-                            InputFile photo = new InputFile().setMedia(in, "image");
-                            execute(SendPhoto.builder().photo(photo).build());
+                        preparedMessage = transliterate(message);
+                        System.out.println("image prepared");
+                        return preparedMessage;
+                    })
+                            .thenCompose(result -> CompletableFuture.supplyAsync(() -> {
+                                String resultURL = "";
+                                try {
+                                   resultURL = pictureHTTPClient.getImageLink(result);
+                                    System.out.println("got Image link");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                return resultURL;
+                            }))
+                            .thenCompose(resultURL -> CompletableFuture.supplyAsync(() ->{
+                                InputFile photo = null;
+                                URL url = null;
+                                try {
+                                    url = new URL(resultURL);
+                                    linkToImage[0] = new BufferedInputStream(url.openStream());
+                                    photo = new InputFile().setMedia(linkToImage[0], "image");
+                                    System.out.println("image got set");
+                                } catch (Exception e ) {
+                                    e.printStackTrace();
+                                }
+                                return photo;
+                            }));
 
-                        } catch (TelegramApiException | IOException telegramApiException) {
-                            telegramApiException.printStackTrace();
-                        }
-                    };
 
+                    InputFile photo = future.get();
+                    if(photo!= null) {
+                        execute(SendPhoto.builder().photo(photo).chatId(getChatId()).build());
+                        linkToImage[0].close();
 
-                    List<Runnable> runnables = Arrays.asList(
-                            getPreparedMessage,
-                            runHTTPClient,
-                            getPhoto);
-
-
-                    CompletableFuture[] futures = runnables.stream().map(task -> CompletableFuture.runAsync(task, executeImagesThread))
-                            .toArray(CompletableFuture[]::new);
-                    CompletableFuture.allOf(futures).join();
-
-
-                    // int recievedThreads = 0;
-                 /*   while (recievedThreads < 3) {
-                        Future<String> picture = service.take();
-                        String result = picture.get();
-                        service.poll(2, TimeUnit.SECONDS);
-                        resultURL = result;
-
-                        System.out.println(recievedThreads++);
 
                     }
-                    executeImagesThread.awaitTermination(2, TimeUnit.SECONDS);
-
-                  */
-
 
                 }
 
 
             }
-        } catch(IOException | SQLException | TelegramApiException e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
